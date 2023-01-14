@@ -27,7 +27,7 @@ def alliance():
 
     a = "CREATE TABLE IF NOT EXISTS ALLIANCE(id INT AUTO_INCREMENT PRIMARY KEY,Name varchar(255) unique,Game_ID int(" \
         "255) " \
-        "unique,Creation_Date TEXT,Status varchar(255),Approval int(1),Total_Points int(255),Total_Bases int(255)," \
+        "unique,Creation_Date TEXT,Status varchar(255),Approval int(1),Total_Points int(255),Total_Bases float," \
         "Total_Members TEXT,Newcomers varchar(255),Requirements int(255),Democracy varchar(255),Language varchar(" \
         "255),Total_Maps int(255),Inserted_Date datetime) "
     mycursor.execute(a)
@@ -66,17 +66,17 @@ def alliance():
             c_date = li[li.index('alliance creation date:') + 1]
             p = li[li.index('Points:') + 1]
             points = int(p.replace(".", "").strip())
-            bases = li[li.index('Bases:') + 1]
+            bases = float(li[li.index('Bases:') + 1])
             maps = li[li.index('Conquered Maps:') + 1]
             memb = li[li.index('Memb.:') + 1]
             newcomers = li[li.index('newcomers:') + 1]
             mem_new = li[li.index('Memb. + newcomers:') + 1]
             democracy = li[li.index('Democracy:') + 1]
-            if points and bases and memb:
+            if points + bases > 0:
                 status = "EXIST"
             else:
                 status = "EXTINCT"
-            approval = 0
+            approval = 1
             date = datetime.datetime.now()
             data = (
                 alliance, i, c_date, status, approval, points, bases, memb, newcomers, cond, democracy, language, maps,
@@ -84,7 +84,8 @@ def alliance():
             mycursor.execute(c, data)
             mydb.commit()
             print(mycursor.rowcount, "lines were inserted.")
-        except:
+        except Exception as e:
+            print(e)
             pass
 
     driver.close()
