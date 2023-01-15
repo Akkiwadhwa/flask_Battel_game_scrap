@@ -1,6 +1,5 @@
 import datetime
 import time
-
 import mysql.connector
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -103,7 +102,8 @@ def ranking():
         except Exception as e:
             print(e)
             pass
-
+    driver.close()
+    driver.quit()
 
 while True:
     ranking()
