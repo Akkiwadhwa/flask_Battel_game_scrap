@@ -1,5 +1,6 @@
 import datetime
 import time
+
 import mysql.connector
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -9,12 +10,13 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def ranking():
+def ranking(user, password):
     mydb = mysql.connector.connect(
-        host="localhost",
-        user="admin",
-        password="admin",
-        database="db"
+        host="151.106.100.138",
+        port=3306,
+        user="nouahsar_admin",
+        password="innovation1995",
+        database="nouahsar_db"
     )
     mycursor = mydb.cursor(buffered=True)
 
@@ -25,8 +27,8 @@ def ranking():
     except:
         pass
 
-    a = "CREATE TABLE IF NOT EXISTS RANKING(id INT AUTO_INCREMENT PRIMARY KEY, Ranking int(255),Name varchar(255) " \
-        "unique,Status varchar(255),Total_Points int(255),Total_Bases float,Total_Members TEXT,Democracy varchar(" \
+    a = "CREATE TABLE IF NOT EXISTS ranking(id INT AUTO_INCREMENT PRIMARY KEY, Ranking int(255),Name varchar(255) " \
+        "unique,Status varchar(255),Total_Points int(255),Total_Bases int(255),Total_Members TEXT,Democracy varchar(" \
         "255),Creation_Date TEXT,Language varchar(255),Requirements TEXT,Newcomers varchar(255),Date datetime) "
     mycursor.execute(a)
     mydb.commit()
@@ -40,8 +42,8 @@ def ranking():
     options.add_argument("--headless")
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
     driver.get(url)
-    driver.find_element(By.ID, "loginname").send_keys("major81")
-    driver.find_element(By.ID, "loginpass").send_keys("1122334455")
+    driver.find_element(By.ID, "loginname").send_keys(user)
+    driver.find_element(By.ID, "loginpass").send_keys(password)
     driver.find_element(By.CLASS_NAME, "loginbut").click()
     time.sleep(3)
     driver.get("https://www.baseattackforce.com/ally.php?a=2")
@@ -51,14 +53,22 @@ def ranking():
     name = soup.find_all(class_="allyprofil")
     rows = name[1].find_all('tr')
     rows.pop(0)
+    mydb = mysql.connector.connect(
+        host="151.106.100.138",
+        port=3306,
+        user="nouahsar_admin",
+        password="innovation1995",
+        database="nouahsar_db"
+    )
+    mycursor = mydb.cursor()
     for i in rows:
         try:
             li = [i.text for i in i.find_all("td")]
             rank = li[1]
             name = li[2].split(" ")[0]
-            c_date = li[2].split(" ")[1]
+            c_date = datetime.datetime.strptime(li[2].split(" ")[1], '%d.%m.%y').strftime('%Y.%m.%d')
             points = li[3].replace(".", "")
-            bases = li[4]
+            bases = int(float(li[4]))
             members = li[5]
             if "Requirements:" in li[6].split("Points")[0]:
                 requirements = li[6].split("Points")[0] + "Points"
@@ -98,13 +108,8 @@ def ranking():
             )
             mycursor.execute(c, data)
             mydb.commit()
-            print(mycursor.rowcount, "lines were inserted.")
         except Exception as e:
             print(e)
             pass
     driver.close()
     driver.quit()
-
-while True:
-    ranking()
-    time.sleep(60)

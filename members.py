@@ -1,5 +1,5 @@
+import datetime
 import time
-
 import mysql.connector
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -9,14 +9,15 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def ranking():
+def members(user, password):
     mydb = mysql.connector.connect(
-        host="localhost",
-        user="admin",
-        password="admin",
-        database="db"
+        host="151.106.100.138",
+        port=3306,
+        user="nouahsar_admin",
+        password="innovation1995",
+        database="nouahsar_db"
     )
-    mycursor = mydb.cursor(buffered=True)
+    mycursor = mydb.cursor()
 
     try:
         b = "drop table members"
@@ -26,25 +27,40 @@ def ranking():
         pass
 
     a = "CREATE TABLE IF NOT EXISTS members(Userid INT AUTO_INCREMENT PRIMARY KEY, Username varchar(255)" \
-        "unique,ranking int(255),Total_Points int(255),Total_Bases float,alliance varchar(255))"
+        "unique,ranking int(255),Total_Points int(255),Total_Bases float,alliance varchar(255),Inserted_Date datetime)"
     mycursor.execute(a)
     mydb.commit()
 
-    c = "INSERT INTO members(Username,ranking,Total_Points,Total_Bases,alliance) VALUES( %s, %s, %s,%s, %s)"
+    a1 = "CREATE TABLE IF NOT EXISTS members_progress(Userid INT AUTO_INCREMENT PRIMARY KEY, Username varchar(255)" \
+        ",ranking int(255),Total_Points int(255),Total_Bases float,alliance varchar(255),Inserted_Date datetime)"
+    mycursor.execute(a1)
+    mydb.commit()
+
+    c = "INSERT INTO members(Username,ranking,Total_Points,Total_Bases,alliance,Inserted_Date) VALUES( %s, %s, %s,%s, %s,%s)"
+
+    c1 = "INSERT INTO members_progress(Username,ranking,Total_Points,Total_Bases,alliance,Inserted_Date) VALUES( %s, %s, %s,%s, %s,%s)"
 
     url = "https://www.baseattackforce.com/"
     options = Options()
     options.add_argument("--headless")
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
     driver.get(url)
-    driver.find_element(By.ID, "loginname").send_keys("major81")
-    driver.find_element(By.ID, "loginpass").send_keys("1122334455")
+    driver.find_element(By.ID, "loginname").send_keys(user)
+    driver.find_element(By.ID, "loginpass").send_keys(password)
     driver.find_element(By.CLASS_NAME, "loginbut").click()
     time.sleep(3)
-    for i in range(1, 977, 25):
+    mydb = mysql.connector.connect(
+        host="151.106.100.138",
+        port=3306,
+        user="nouahsar_admin",
+        password="innovation1995",
+        database="nouahsar_db"
+    )
+    mycursor = mydb.cursor()
+    for i in range(1, 987, 25):
         try:
             driver.get(f"https://www.baseattackforce.com/charts.php?s={i}")
-            time.sleep(5)
+            time.sleep(3)
             data = driver.page_source
             soup = BeautifulSoup(data, "lxml")
             name = soup.find(class_="allyprofil")
@@ -57,12 +73,14 @@ def ranking():
                 points = li[2].replace("'", "")
                 bases = li[4]
                 alliance = li[8]
+                date = datetime.datetime.now()
                 data = (
-                    username, rank, points, bases, alliance
+                    username, rank, points, bases, alliance,date
                 )
                 mycursor.execute(c, data)
                 mydb.commit()
-                print(mycursor.rowcount, "lines were inserted.")
+                mycursor.execute(c1, data)
+                mydb.commit()
         except Exception as e:
             print(e)
             pass
@@ -70,7 +88,4 @@ def ranking():
     driver.close()
     driver.quit()
 
-
-while True:
-    ranking()
-    time.sleep(60 * 60 * 6)
+members("major81","1122334455")
