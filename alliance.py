@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def alliance(user, password):
+def alliance(driver):
     mydb = mysql.connector.connect(
         host="151.106.100.138",
         port=3306,
@@ -34,12 +34,11 @@ def alliance(user, password):
     mycursor.execute(a)
     mydb.commit()
 
-
     a1 = "CREATE TABLE IF NOT EXISTS alliance_progress(id INT AUTO_INCREMENT PRIMARY KEY,Name varchar(255),Game_ID int(" \
-        "255) " \
-        ",Creation_Date TEXT,Status varchar(255),Approval int(1),Total_Points int(255),Total_Bases int(255)," \
-        "Total_Members int(255),Newcomers varchar(255),Requirements int(255),Democracy varchar(255),Language varchar(" \
-        "255),Total_Maps int(255),Inserted_Date datetime) "
+         "255) " \
+         ",Creation_Date TEXT,Status varchar(255),Approval int(1),Total_Points int(255),Total_Bases int(255)," \
+         "Total_Members int(255),Newcomers varchar(255),Requirements int(255),Democracy varchar(255),Language varchar(" \
+         "255),Total_Maps int(255),Inserted_Date datetime) "
     mycursor.execute(a1)
     mydb.commit()
 
@@ -48,28 +47,20 @@ def alliance(user, password):
         "%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s)"
 
     c1 = "INSERT INTO alliance_progress(Name,Game_ID,Creation_Date,Status,Approval,Total_Points,Total_Bases,Total_Members," \
-        "Newcomers,Requirements,Democracy,Language,Total_Maps,Inserted_Date) VALUES( %s, %s, %s, " \
-        "%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s)"
+         "Newcomers,Requirements,Democracy,Language,Total_Maps,Inserted_Date) VALUES( %s, %s, %s, " \
+         "%s, %s, %s, %s,%s, %s, %s, %s, %s, %s,%s)"
 
-    url = "https://www.baseattackforce.com/"
-    options = Options()
-    options.add_argument("--headless")
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
-    driver.get(url)
-    driver.find_element(By.ID, "loginname").send_keys(user)
-    driver.find_element(By.ID, "loginpass").send_keys(password)
-    driver.find_element(By.CLASS_NAME, "loginbut").click()
     time.sleep(3)
-    mydb = mysql.connector.connect(
-        host="151.106.100.138",
-        port=3306,
-        user="nouahsar_admin",
-        password="innovation1995",
-        database="nouahsar_db"
-    )
-    mycursor = mydb.cursor()
     for i in range(10, 500):
         try:
+            mydb = mysql.connector.connect(
+                host="151.106.100.138",
+                port=3306,
+                user="nouahsar_admin",
+                password="innovation1995",
+                database="nouahsar_db"
+            )
+            mycursor = mydb.cursor()
             driver.get(f"https://www.baseattackforce.com/ally.php?b={i}")
             time.sleep(3)
             data = driver.page_source
@@ -83,11 +74,12 @@ def alliance(user, password):
                 cond = li[li.index('minimum admission conditions: ') + 1]
             else:
                 cond = None
-            c_date = datetime.datetime.strptime(li[li.index('alliance creation date:') + 1], '%d.%m.%Y').strftime('%Y.%m.%d')
+            c_date = datetime.datetime.strptime(li[li.index('alliance creation date:') + 1], '%d.%m.%Y').strftime(
+                '%Y.%m.%d')
             p = li[li.index('Points:') + 1]
             points = int(float(p.replace(".", "").strip()))
             bases = int(float(li[li.index('Bases:') + 1]))
-            maps = li[li.index('Conquered Maps:') + 1].replace("/ 50","")
+            maps = li[li.index('Conquered Maps:') + 1].replace("/ 50", "")
             memb = li[li.index('Memb.:') + 1]
             newcomers = li[li.index('newcomers:') + 1]
             democracy = li[li.index('Democracy:') + 1]
@@ -104,9 +96,7 @@ def alliance(user, password):
             mydb.commit()
             mycursor.execute(c1, data)
             mydb.commit()
+            print(f"{mycursor.rowcount} record(s) affected")
         except Exception as e:
             print(e)
             pass
-
-    driver.close()
-    driver.quit()

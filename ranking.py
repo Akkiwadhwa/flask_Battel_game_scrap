@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def ranking(user, password):
+def ranking(driver):
     mydb = mysql.connector.connect(
         host="151.106.100.138",
         port=3306,
@@ -37,14 +37,6 @@ def ranking(user, password):
         "Language,Requirements,Newcomers,Date) VALUES( %s, %s, %s, " \
         "%s, %s, %s, %s,%s, %s, %s, %s, %s)"
 
-    url = "https://www.baseattackforce.com/"
-    options = Options()
-    options.add_argument("--headless")
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
-    driver.get(url)
-    driver.find_element(By.ID, "loginname").send_keys(user)
-    driver.find_element(By.ID, "loginpass").send_keys(password)
-    driver.find_element(By.CLASS_NAME, "loginbut").click()
     time.sleep(3)
     driver.get("https://www.baseattackforce.com/ally.php?a=2")
     time.sleep(5)
@@ -53,16 +45,16 @@ def ranking(user, password):
     name = soup.find_all(class_="allyprofil")
     rows = name[1].find_all('tr')
     rows.pop(0)
-    mydb = mysql.connector.connect(
-        host="151.106.100.138",
-        port=3306,
-        user="nouahsar_admin",
-        password="innovation1995",
-        database="nouahsar_db"
-    )
-    mycursor = mydb.cursor()
     for i in rows:
         try:
+            mydb = mysql.connector.connect(
+                host="151.106.100.138",
+                port=3306,
+                user="nouahsar_admin",
+                password="innovation1995",
+                database="nouahsar_db"
+            )
+            mycursor = mydb.cursor()
             li = [i.text for i in i.find_all("td")]
             rank = li[1]
             name = li[2].split(" ")[0]
@@ -108,8 +100,8 @@ def ranking(user, password):
             )
             mycursor.execute(c, data)
             mydb.commit()
+            print(f"{mycursor.rowcount} record(s) affected")
         except Exception as e:
             print(e)
             pass
-    driver.close()
-    driver.quit()
+
