@@ -1,0 +1,91 @@
+{% include "header.html"%}
+
+
+<!-- page content -->
+<div class="right_col" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>User Profile</h3>
+            </div>
+
+            <div class="title_right">
+                <div class="col-md-5 col-sm-5  form-group pull-right top_search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search for...">
+                        <span class="input-group-btn">
+                      <button class="btn btn-secondary" type="button">Go!</button>
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 ">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>User Report <small>Activity report</small></h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                   aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Settings 1</a>
+                                    <a class="dropdown-item" href="#">Settings 2</a>
+                                </div>
+                            </li>
+                            <li><a class="close-link"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="col-md-3 col-sm-3  profile_left">
+                            <div class="profile_img">
+                                <div id="crop-avatar">
+                                    <!-- Current avatar -->
+                                    <img class="img-responsive avatar-view" src="{{ current_user.email | gravatar }}" alt="Avatar"
+                                         title="Change the avatar">
+                                </div>
+                            </div>
+                            <h3>{{current_user.name}}</h3>
+
+                            <ul class="list-unstyled user_data">
+                                <li><i class="fa fa-map-marker user-profile-icon"></i> {{current_user.email}}
+                                </li>
+
+                                
+                            </ul>
+
+                            </div>
+                            </div>
+                       
+<!-- /page content -->
+
+
+<!-- jQuery -->
+<script src="static/vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="static/vendors/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<!-- FastClick -->
+<script src="static/vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="static/vendors/nprogress/nprogress.js"></script>
+<!-- morris.js -->
+<script src="static/vendors/raphael/raphael.min.js"></script>
+<script src="static/vendors/morris.js/morris.min.js"></script>
+<!-- bootstrap-progressbar -->
+<script src="static/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+<!-- bootstrap-daterangepicker -->
+<script src="static/vendors/moment/min/moment.min.js"></script>
+<script src="static/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="static/build/js/custom.min.js"></script>
+
+{%include "footer.html" %}
