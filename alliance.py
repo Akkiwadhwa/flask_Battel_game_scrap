@@ -2,22 +2,16 @@ import datetime
 import time
 import mysql.connector
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 def alliance(driver):
     mydb = mysql.connector.connect(
-        host="151.106.100.138",
-        port=3306,
-        user="nouahsar_admin",
-        password="innovation1995",
-        database="nouahsar_db"
+        host="localhost",
+        user="noua_admin",
+        password="root",
+        database="noua_db"
     )
-    mycursor = mydb.cursor(buffered=True)
+    mycursor = mydb.cursor()
 
     try:
         b = "drop table alliance"
@@ -54,11 +48,10 @@ def alliance(driver):
     for i in range(10, 500):
         try:
             mydb = mysql.connector.connect(
-                host="151.106.100.138",
-                port=3306,
-                user="nouahsar_admin",
-                password="innovation1995",
-                database="nouahsar_db"
+                host="localhost",
+                user="noua_admin",
+                password="root",
+                database="noua_db"
             )
             mycursor = mydb.cursor()
             driver.get(f"https://www.baseattackforce.com/ally.php?b={i}")
@@ -74,13 +67,16 @@ def alliance(driver):
                 cond = li[li.index('minimum admission conditions: ') + 1]
             else:
                 cond = None
-            c_date = datetime.datetime.strptime(li[li.index('alliance creation date:') + 1], '%d.%m.%Y').strftime(
-                '%Y.%m.%d')
+            try:
+                c_date = datetime.datetime.strptime(li[li.index('alliance creation date:') + 1], '%d.%m.%Y').strftime(
+                    '%Y.%m.%d')
+            except:
+                c_date = None
             p = li[li.index('Points:') + 1]
             points = int(float(p.replace(".", "").strip()))
             bases = int(float(li[li.index('Bases:') + 1]))
             maps = li[li.index('Conquered Maps:') + 1].replace("/ 50", "")
-            memb = li[li.index('Memb.:') + 1]
+            memb = li[li.index('Memb.:') + 1].replace("/ 50", "")
             newcomers = li[li.index('newcomers:') + 1]
             democracy = li[li.index('Democracy:') + 1]
             if points + bases > 0:

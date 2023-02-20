@@ -2,20 +2,15 @@ import datetime
 import time
 import mysql.connector
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+
 
 
 def members(driver):
     mydb = mysql.connector.connect(
-        host="151.106.100.138",
-        port=3306,
-        user="nouahsar_admin",
-        password="innovation1995",
-        database="nouahsar_db"
+        host="localhost",
+        user="noua_admin",
+        password="root",
+        database="noua_db"
     )
     mycursor = mydb.cursor()
 
@@ -44,12 +39,11 @@ def members(driver):
     for i in range(1, 987, 25):
         try:
             mydb = mysql.connector.connect(
-                host="151.106.100.138",
-                port=3306,
-                user="nouahsar_admin",
-                password="innovation1995",
-                database="nouahsar_db"
-            )
+                        host="localhost",
+                        user="noua_admin",
+                        password="root",
+                        database="noua_db"
+                                )
             mycursor = mydb.cursor()
             driver.get(f"https://www.baseattackforce.com/charts.php?s={i}")
             time.sleep(3)
@@ -61,7 +55,7 @@ def members(driver):
             for i in rows:
                 li = [i.text for i in i.find_all("td")]
                 username = li[6]
-                rank = li[0]
+                rank = li[0].replace(">","")
                 points = li[2].replace("'", "")
                 bases = li[4]
                 alliance = li[8]

@@ -1,24 +1,18 @@
 import datetime
 import time
-
 import mysql.connector
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+
 
 
 def ranking(driver):
     mydb = mysql.connector.connect(
-        host="151.106.100.138",
-        port=3306,
-        user="nouahsar_admin",
-        password="innovation1995",
-        database="nouahsar_db"
+        host="localhost",
+        user="noua_admin",
+        password="root",
+        database="noua_db"
     )
-    mycursor = mydb.cursor(buffered=True)
+    mycursor = mydb.cursor()
 
     try:
         b = "drop table ranking"
@@ -48,11 +42,10 @@ def ranking(driver):
     for i in rows:
         try:
             mydb = mysql.connector.connect(
-                host="151.106.100.138",
-                port=3306,
-                user="nouahsar_admin",
-                password="innovation1995",
-                database="nouahsar_db"
+                host="localhost",
+                user="noua_admin",
+                password="root",
+                database="noua_db"
             )
             mycursor = mydb.cursor()
             li = [i.text for i in i.find_all("td")]
